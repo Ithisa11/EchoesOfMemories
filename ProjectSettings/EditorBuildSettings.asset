@@ -12,6 +12,9 @@ EditorBuildSettings:
     path: Assets/Scenes/Credits.unity
     guid: b2181a69048e7b34b951ce139f8aa2df
   - enabled: 1
-    path: Assets/Scenes/Game.unity
+    path: Assets/Scenes/Bedroom.unity
     guid: 2cb2ca464ab8cc343a87d3a9892a2c5d
+  - enabled: 1
+    path: Assets/Scenes/RBathroom.unity
+    guid: 0d83807126b87254bbf7c97469b7f270
   m_configObjects: {}
