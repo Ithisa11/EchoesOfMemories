@@ -13,6 +13,6 @@ public class LoadScene : MonoBehaviour
     }
         public void StartGame()
     {
-        SceneManager.LoadScene("Game"); 
+        SceneManager.LoadScene("Opening"); 
     }
 }
