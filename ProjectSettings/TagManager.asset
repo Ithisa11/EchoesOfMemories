@@ -7,6 +7,7 @@ TagManager:
   - Floor
   - Door
   - PlayerSpawn
+  - PlayerSpawn_BedWake
   layers:
   - Default
   - TransparentFX

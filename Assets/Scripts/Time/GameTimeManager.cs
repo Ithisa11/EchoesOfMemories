@@ -15,7 +15,7 @@ public class GameTimeManager : MonoBehaviour
 
     void Start()
     {
-        gameHours = 0;
+        gameHours = 9;
         gameMinutes = 0;
         UpdateTimeUI();
     }

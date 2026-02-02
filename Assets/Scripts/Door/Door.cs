@@ -9,6 +9,10 @@ public class Door : MonoBehaviour
     public bool isLocked;
     public string lockedMessage = "Door is locked";
 
+    [Header("Spawn In Next Scene (by object name)")]
+    [Tooltip("Name of the spawn GameObject in the destination scene. Example: Spawn_Bedroom, Spawn_LivingRoom")]
+    public string targetSpawnObjectName = "Spawn_Bedroom";
+
     [Header("Prompt")]
     [SerializeField] private DoorPrompt prompt;
 
@@ -32,9 +36,11 @@ public class Door : MonoBehaviour
             return;
         }
 
-
         if (loadsScene && !string.IsNullOrEmpty(sceneToLoad))
         {
+            // ✅ Set desired spawn for next scene
+            SpawnRouter.nextSpawnObjectName = targetSpawnObjectName;
+
             if (TransitionManager.I != null)
                 TransitionManager.I.LoadSceneWithFade(sceneToLoad);
         }
