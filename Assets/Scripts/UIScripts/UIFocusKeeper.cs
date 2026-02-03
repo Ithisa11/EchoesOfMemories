@@ -3,7 +3,6 @@ using UnityEngine.EventSystems;
 
 public class UIFocusKeeper : MonoBehaviour
 {
-    [Tooltip("The UI element that should be selected first.")]
     public GameObject firstSelected;
 
     void Start()

@@ -15,4 +15,8 @@ public class LoadScene : MonoBehaviour
     {
         SceneManager.LoadScene("Opening"); 
     }
+            public void Guidline()
+    {
+        SceneManager.LoadScene("Guide"); 
+    }
 }

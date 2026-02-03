@@ -8,40 +8,21 @@ public class MirrorFakeReflection2D : MonoBehaviour
         FollowPlayerSameDirection
     }
 
-    [Header("References")]
     public Transform player;
     public SpriteRenderer playerRenderer;
-    public SpriteRenderer reflectionRenderer; // SpriteRenderer on MirrorReflection
-
-    [Header("Mirror Axis")]
-    [Tooltip("If null, uses this transform as the mirror axis (center line).")]
+    public SpriteRenderer reflectionRenderer; 
     public Transform mirrorAxis;
-
-    [Header("Mode")]
     public ReflectionMode mode = ReflectionMode.FollowPlayerSameDirection;
-
-    [Header("Visibility")]
     public bool hideWhenBehindMirror = true;
     public bool frontSideIsRight = true;
-    [Tooltip("Hard cutoff distance. Set <= 0 to disable.")]
     public float maxReflectionDistance = 0f;
-
-    [Header("Position & Style")]
     public Vector2 reflectionOffset = Vector2.zero;
-    [Tooltip("Extra scale multiplier for stylized reflection (squish, stretch).")]
     public Vector2 reflectionScale = new Vector2(1f, 0.95f);
-    [Tooltip("Push the reflection sideways so it's visible (world units).")]
     public float sideSeparation = 0.3f;
-
-    [Header("Color")]
     [Range(0f, 1f)] public float reflectionAlpha = 0.5f;
     public Color reflectionTint = Color.white;
-
-    [Header("Distance Fade")]
     public bool fadeByDistance = true;
-    [Tooltip("Distance from mirror axis where fading begins.")]
     public float fadeStartDistance = 0.5f;
-    [Tooltip("Distance where reflection becomes fully invisible.")]
     public float fadeEndDistance = 4f;
 
     void Reset()
@@ -56,14 +37,14 @@ public class MirrorFakeReflection2D : MonoBehaviour
 
         Transform axis = mirrorAxis ? mirrorAxis : transform;
 
-        // ─── Copy appearance ─────────────────────────────────────────────
+        // Copy Ash
         reflectionRenderer.sprite = playerRenderer.sprite;
         reflectionRenderer.flipX = !playerRenderer.flipX;
         reflectionRenderer.flipY = playerRenderer.flipY;
         reflectionRenderer.drawMode = playerRenderer.drawMode;
         reflectionRenderer.size = playerRenderer.size;
 
-        // ─── Position ────────────────────────────────────────────────────
+        // Position 
         Vector3 p = player.position;
         float x;
 
@@ -86,14 +67,14 @@ public class MirrorFakeReflection2D : MonoBehaviour
         targetPos += (Vector3)reflectionOffset;
         reflectionRenderer.transform.position = targetPos;
 
-        // ─── Scale ───────────────────────────────────────────────────────
+        // Scale 
         Vector3 s = player.localScale;
         s.x *= -1f;
         s.x *= reflectionScale.x;
         s.y *= reflectionScale.y;
         reflectionRenderer.transform.localScale = s;
 
-        // ─── Visibility rules ────────────────────────────────────────────
+        // Visibility 
         bool visible = true;
 
         if (hideWhenBehindMirror)
@@ -109,7 +90,7 @@ public class MirrorFakeReflection2D : MonoBehaviour
                 visible = false;
         }
 
-        // ─── Distance fade ───────────────────────────────────────────────
+        // fade
         float alpha = reflectionAlpha;
 
         if (fadeByDistance)

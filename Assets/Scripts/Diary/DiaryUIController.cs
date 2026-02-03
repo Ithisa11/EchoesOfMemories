@@ -5,14 +5,14 @@ using UnityEngine.UI;
 
 public class DiaryUIController : MonoBehaviour
 {
-    [Header("Root + Panels")]
+    [Header("Root")]
     [SerializeField] private GameObject diaryRoot;
     [SerializeField] private GameObject listPanel;
     [SerializeField] private GameObject writePanel;
     [SerializeField] private GameObject readPanel;
 
     [Header("List")]
-    [SerializeField] private Transform listContent;      
+    [SerializeField] private Transform listContent;
     [SerializeField] private DiaryNoteItem itemPrefab;
     [SerializeField] private Button firstSelectedOnOpen;
 
@@ -28,11 +28,8 @@ public class DiaryUIController : MonoBehaviour
     [SerializeField] private MonoBehaviour playerMovementScript;
 
     [Header("Cursor")]
-    [SerializeField] private bool lockCursorInGameplay = false; 
+    [SerializeField] private bool lockCursorInGameplay = false;
 
-    [Header("Debug")]
-    [SerializeField] private bool debugLogs = false;
-    
 
 
     private void Awake()
@@ -63,14 +60,14 @@ public class DiaryUIController : MonoBehaviour
         if (diaryRoot == null) return;
 
         diaryRoot.SetActive(true);
+        GameProgress.MarkDiaryChecked();
+
         SetPlayerControl(false);
         SetCursorForDiary(true);
 
         ShowList();
         if (firstSelectedOnOpen != null && EventSystem.current != null)
             EventSystem.current.SetSelectedGameObject(firstSelectedOnOpen.gameObject);
-
-        if (debugLogs) Debug.Log("[DiaryUI] OpenDiary");
     }
 
     public void CloseDiary()
@@ -82,8 +79,6 @@ public class DiaryUIController : MonoBehaviour
         SetCursorForDiary(false);
         if (EventSystem.current != null)
             EventSystem.current.SetSelectedGameObject(null);
-
-        if (debugLogs) Debug.Log("[DiaryUI] CloseDiary");
     }
 
     public void ShowList()
@@ -93,8 +88,6 @@ public class DiaryUIController : MonoBehaviour
         if (readPanel) readPanel.SetActive(false);
 
         RebuildList();
-
-        if (debugLogs) Debug.Log("[DiaryUI] ShowList");
     }
 
     public void ShowWrite()
@@ -107,15 +100,12 @@ public class DiaryUIController : MonoBehaviour
         if (bodyInput) bodyInput.text = "";
 
         if (titleInput) titleInput.ActivateInputField();
-
-        if (debugLogs) Debug.Log("[DiaryUI] ShowWrite");
     }
 
     public void SaveNewNote()
     {
         if (DiaryService.Instance == null)
         {
-            Debug.LogWarning("[DiaryUI] DiaryService.Instance is null. Did you add DiaryService to the scene?");
             return;
         }
 
@@ -123,15 +113,12 @@ public class DiaryUIController : MonoBehaviour
         string body = bodyInput ? bodyInput.text : "";
         if (string.IsNullOrWhiteSpace(body))
         {
-            if (debugLogs) Debug.Log("[DiaryUI] Not saving: body is empty.");
             return;
         }
 
         DiaryService.Instance.AddPlayerEntry(title, body);
         ShowList();
         RebuildList();
-
-        if (debugLogs) Debug.Log($"[DiaryUI] SaveNewNote -> service count: {DiaryService.Instance.GetEntries().Count}");
     }
 
     public void ShowRead(DiaryEntry entry)
@@ -144,21 +131,17 @@ public class DiaryUIController : MonoBehaviour
 
         if (readTitleText) readTitleText.text = entry.title;
         if (readBodyText) readBodyText.text = entry.body;
-
-        if (debugLogs) Debug.Log("[DiaryUI] ShowRead");
     }
 
     private void RebuildList()
     {
         if (DiaryService.Instance == null)
         {
-            Debug.LogWarning("[DiaryUI] DiaryService.Instance is null. Cannot rebuild list.");
             return;
         }
 
         if (listContent == null || itemPrefab == null)
         {
-            Debug.LogWarning("[DiaryUI] listContent or itemPrefab is not assigned.");
             return;
         }
 
@@ -166,8 +149,6 @@ public class DiaryUIController : MonoBehaviour
             Destroy(child.gameObject);
 
         var entries = DiaryService.Instance.GetEntries();
-
-        if (debugLogs) Debug.Log($"[DiaryUI] RebuildList entries count = {entries.Count}");
 
         for (int i = 0; i < entries.Count; i++)
         {

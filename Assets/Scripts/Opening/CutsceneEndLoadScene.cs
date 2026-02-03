@@ -7,16 +7,13 @@ public class CutsceneEndLoadScene : MonoBehaviour
     [Header("Video")]
     [SerializeField] private VideoPlayer videoPlayer;
 
-    [Header("Cutscene UI")]
-    [SerializeField] private GameObject cutsceneUIRoot; // Backdrop + RawImage parent
+    [Header("Cutscene")]
+    [SerializeField] private GameObject cutsceneUIRoot; 
 
-    [Header("Gameplay UI")]
-    [SerializeField] private Canvas gameplayCanvas;     // Opening gameplay canvas
+    [Header("Canvas")]
+    [SerializeField] private Canvas gameplayCanvas;     
 
-    [Header("Next Scene")]
-    [SerializeField] private string nextSceneName = "Bedroom";
-
-    [Header("Spawn Point Name In Next Scene")]
+    [Header("Spawn Point")]
     [SerializeField] private string nextSpawnObjectName = "Spawn_BedWake";
 
     private bool started;
@@ -61,8 +58,8 @@ public class CutsceneEndLoadScene : MonoBehaviour
 
     private void OnFinished(VideoPlayer vp)
     {
-        SpawnRouter.nextSpawnObjectName = nextSpawnObjectName;   // e.g., "Spawn_BedWake"
-        SpawnRouter.playWakeOnNextScene = true;                  // ✅ NEW
-        UnityEngine.SceneManagement.SceneManager.LoadScene(nextSceneName);
+        SpawnRouter.nextSpawnObjectName = nextSpawnObjectName;  
+        SpawnRouter.playWakeOnNextScene = true;                 
+        UnityEngine.SceneManagement.SceneManager.LoadScene("Bedroom");
     }
 }

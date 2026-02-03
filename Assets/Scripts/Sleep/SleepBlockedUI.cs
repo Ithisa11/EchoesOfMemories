@@ -4,10 +4,7 @@ using TMPro;
 
 public class SleepBlockedUI : MonoBehaviour
 {
-    [Header("UI object to enable/disable (SleepBlockedText)")]
     public GameObject uiRoot;
-
-    [Header("Text (optional if you just show/hide)")]
     public TextMeshProUGUI text;
 
     public float showDuration = 2.5f;
@@ -16,11 +13,11 @@ public class SleepBlockedUI : MonoBehaviour
 
     private void Awake()
     {
-        // Auto-find text if not assigned
+        // Auto-find text
         if (text == null && uiRoot != null)
             text = uiRoot.GetComponent<TextMeshProUGUI>();
 
-        // Hide UI at start (but DO NOT disable this script object)
+        // Hide UI 
         if (uiRoot != null)
             uiRoot.SetActive(false);
     }
@@ -29,7 +26,6 @@ public class SleepBlockedUI : MonoBehaviour
     {
         if (uiRoot == null)
         {
-            Debug.LogWarning("SleepBlockedUI: uiRoot is not assigned.");
             return;
         }
 

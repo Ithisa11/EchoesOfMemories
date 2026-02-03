@@ -5,16 +5,14 @@ using TMPro;
 
 public class BedWakeMessage : MonoBehaviour
 {
-    [Header("Player References")]
     [SerializeField] private Transform playerRoot;
     [SerializeField] private Rigidbody2D playerRb;
     [SerializeField] private Animator animator;
 
-    [Header("Movement Scripts To Disable")]
-    [Tooltip("Drag CharacterM / movement scripts here")]
+    [Header("Movement Disable")]
     [SerializeField] private List<MonoBehaviour> movementScripts = new List<MonoBehaviour>();
 
-    [Header("UI Text")]
+    [Header("UI")]
     [SerializeField] private TMP_Text tmpText;
     [SerializeField] private Text uiText;
 
@@ -33,8 +31,6 @@ public class BedWakeMessage : MonoBehaviour
     {
         if (showing) return;
         showing = true;
-
-        // Resolve player automatically if not assigned
         if (playerRoot == null)
         {
             var p = GameObject.FindGameObjectWithTag("Player");
@@ -53,17 +49,15 @@ public class BedWakeMessage : MonoBehaviour
 
         if (animator == null)
             animator = playerRoot.GetComponentInChildren<Animator>();
-
-        // Set text
         if (tmpText != null) tmpText.text = message;
         if (uiText != null) uiText.text = message;
 
         gameObject.SetActive(true);
 
-        // 🔒 Lock position
+        // Lock position
         lockedPosition = playerRoot.position;
 
-        // 🔒 Freeze Rigidbody
+        //  Freeze Rigidbody
         if (playerRb != null)
         {
             oldBodyType = playerRb.bodyType;
@@ -74,14 +68,14 @@ public class BedWakeMessage : MonoBehaviour
             playerRb.constraints = RigidbodyConstraints2D.FreezeAll;
         }
 
-        // 🔒 Disable movement scripts
+        // Disable movement 
         foreach (var m in movementScripts)
         {
             if (m != null && m.enabled)
                 m.enabled = false;
         }
 
-        // 🔒 Freeze Animator (EXPLICIT, CORRECT)
+        //Freeze Animator 
         if (animator != null)
         {
             animatorWasEnabled = animator.enabled;
@@ -92,7 +86,7 @@ public class BedWakeMessage : MonoBehaviour
     {
         if (!showing) return;
 
-        // SPACE closes popup
+        // closes popup
         if (Input.GetKeyDown(KeyCode.Space))
             Hide();
     }
@@ -101,7 +95,7 @@ public class BedWakeMessage : MonoBehaviour
     {
         if (!showing || playerRoot == null) return;
 
-        // HARD LOCK position (nothing can move the player)
+        // HARD LOCK
         playerRoot.position = lockedPosition;
     }
 
@@ -110,21 +104,21 @@ public class BedWakeMessage : MonoBehaviour
         if (!showing) return;
         showing = false;
 
-        // 🔓 Restore Rigidbody
+        //Restore Rigidbody
         if (playerRb != null)
         {
             playerRb.constraints = oldConstraints;
             playerRb.bodyType = oldBodyType;
         }
 
-        // 🔓 Re-enable movement scripts
+        //Re-enable movement scripts
         foreach (var m in movementScripts)
         {
             if (m != null)
                 m.enabled = true;
         }
 
-        // 🔓 Restore Animator
+        //Restore Animator
         if (animator != null)
             animator.enabled = animatorWasEnabled;
 

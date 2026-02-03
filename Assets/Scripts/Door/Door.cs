@@ -6,11 +6,10 @@ public class Door : MonoBehaviour
     public bool loadsScene;
     public string sceneToLoad;
 
-    public bool isLocked;
-    public string lockedMessage = "Door is locked";
-
-    [Header("Spawn In Next Scene (by object name)")]
-    [Tooltip("Name of the spawn GameObject in the destination scene. Example: Spawn_Bedroom, Spawn_LivingRoom")]
+    [Header("Lock Settings")]
+    public bool requiresKey = false;
+    public bool usesBathroomKey = true;
+    public bool showLockedUIWhenBlocked = true;
     public string targetSpawnObjectName = "Spawn_Bedroom";
 
     [Header("Prompt")]
@@ -28,17 +27,27 @@ public class Door : MonoBehaviour
 
     private void Interact()
     {
-        if (isLocked)
-        {
-            if (LockedDoorUI.I != null)
-                LockedDoorUI.I.Show();
 
-            return;
+        if (requiresKey)
+        {
+            bool hasKey = false;
+
+            if (InventoryManager.I != null)
+            {
+                hasKey = usesBathroomKey && InventoryManager.I.hasBathroomKey;
+            }
+
+            if (!hasKey)
+            {
+                if (showLockedUIWhenBlocked && LockedDoorUI.I != null)
+                    LockedDoorUI.I.Show();
+
+                return;
+            }
         }
 
         if (loadsScene && !string.IsNullOrEmpty(sceneToLoad))
         {
-            // ✅ Set desired spawn for next scene
             SpawnRouter.nextSpawnObjectName = targetSpawnObjectName;
 
             if (TransitionManager.I != null)

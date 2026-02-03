@@ -6,11 +6,9 @@ public class CameraM : MonoBehaviour
 {
     public Transform target;
 
-    [Header("Horizontal Bounds")]
+    [Header("Bounderies")]
     public float minX = -33.33f;
     public float maxX = 44.95f;
-
-    [Header("Smoothing")]
     public float smoothSpeed = 8f;
 
     private Camera cam;

@@ -6,11 +6,7 @@ public enum SpotType { Sit, Sleep }
 public class InteractableSpot : MonoBehaviour
 {
     public SpotType type = SpotType.Sit;
-
-    [Tooltip("Where the player will snap to when interacting.")]
     public Transform actionPoint;
-
-    [Header("Interaction UI")]
     [SerializeField] private InteractionS interactionUI;
     [SerializeField] private string playerTag = "Player";
 
@@ -18,25 +14,25 @@ public class InteractableSpot : MonoBehaviour
 
     private void Reset()
     {
-        // Ensure trigger
+        // trigger
         var col = GetComponent<Collider2D>();
         col.isTrigger = true;
 
-        // Auto-assign action point
+        // assign action point
         if (actionPoint == null)
         {
             var child = transform.Find(type == SpotType.Sit ? "SitPoint" : "SleepPoint");
             if (child != null) actionPoint = child;
         }
 
-        // Try auto-find UI
+        // find UI
         if (interactionUI == null)
             interactionUI = GetComponentInChildren<InteractionS>();
     }
 
     private void Awake()
     {
-        // Safety: hide UI at start
+        //  hide UI 
         if (interactionUI != null)
             interactionUI.ShowPrompt(false);
     }

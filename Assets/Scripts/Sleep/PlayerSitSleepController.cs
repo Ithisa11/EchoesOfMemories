@@ -5,26 +5,22 @@ public class PlayerSitSleepController : MonoBehaviour
 {
     [Header("Input")]
     public KeyCode interactKey = KeyCode.E;
-
-    [Header("References")]
     public Animator animator;
-    public MonoBehaviour movementScript;   // Drag CharacterM here
+    public MonoBehaviour movementScript;  
     public Rigidbody2D rb;
 
     [Header("Time")]
-    public GameTimeManager timeManager;    // Drag your GameTimeManager here
+    public GameTimeManager timeManager;  
     public int wakeUpHour = 9;
     public int wakeUpMinute = 0;
 
     [Header("Snap")]
     public float snapSpeed = 20f;
 
-    [Header("Animator Triggers")]
+    [Header("Animator")]
     public string sitTrigger = "Sit";
     public string sleepTrigger = "Sleep";
     public string exitTrigger = "ExitAction";
-
-    [Header("Animator State Names ")]
     public string idleState = "IdleAnimation";
     public string sitIdleState = "SitIdle";
     public string sleepIdleState = "SleepIdle";
@@ -63,7 +59,7 @@ public class PlayerSitSleepController : MonoBehaviour
         if (currentSpot == null || currentSpot.actionPoint == null) return;
         if (animator == null) return;
 
-        // ✅ Block sleep unless night
+        // Block sleep unless night
         if (currentSpot.type == SpotType.Sleep)
         {
             if (timeManager == null)
@@ -79,7 +75,7 @@ public class PlayerSitSleepController : MonoBehaviour
             }
         }
 
-        // Cancel any pending routines (safety)
+        // Cancel routines 
         if (waitPoseRoutine != null) { StopCoroutine(waitPoseRoutine); waitPoseRoutine = null; }
         if (exitRoutine != null) { StopCoroutine(exitRoutine); exitRoutine = null; }
 
@@ -89,8 +85,6 @@ public class PlayerSitSleepController : MonoBehaviour
 
         // Disable movement
         if (movementScript != null) movementScript.enabled = false;
-
-        // Freeze physics
         if (rb != null)
         {
             rb.velocity = Vector2.zero;
@@ -98,10 +92,9 @@ public class PlayerSitSleepController : MonoBehaviour
             rb.bodyType = RigidbodyType2D.Kinematic;
         }
 
-        // Snap to chair/bed point
+        // Snap 
         StartCoroutine(SnapTo(currentSpot.actionPoint.position));
 
-        // Fire enter trigger ONCE
         animator.ResetTrigger(exitTrigger);
         animator.ResetTrigger(sitTrigger);
         animator.ResetTrigger(sleepTrigger);
@@ -111,7 +104,7 @@ public class PlayerSitSleepController : MonoBehaviour
         else
             animator.SetTrigger(sleepTrigger);
 
-        // Wait until we arrive at the idle pose state (SitIdle/SleepIdle)
+        // Wait until idle 
         string targetIdlePose = (currentActionType == SpotType.Sit) ? sitIdleState : sleepIdleState;
         waitPoseRoutine = StartCoroutine(WaitUntilState(targetIdlePose, () =>
         {
@@ -123,26 +116,22 @@ public class PlayerSitSleepController : MonoBehaviour
     {
         if (!isInAction) return;
         if (animator == null) return;
-
-        // Stop waiting for pose if somehow still running
         if (waitPoseRoutine != null) { StopCoroutine(waitPoseRoutine); waitPoseRoutine = null; }
 
         isTransitioning = true;
-
-        // Fire exit trigger ONCE
         animator.ResetTrigger(exitTrigger);
         animator.SetTrigger(exitTrigger);
 
-        // Wait until IdleAnimation, then restore control
+        // Wait until idle
         exitRoutine = StartCoroutine(WaitUntilState(idleState, () =>
         {
-            // ✅ If we were sleeping, waking up sets time to 09:00
+            // set time to 09:00
             if (currentActionType == SpotType.Sleep && timeManager != null)
             {
                 timeManager.SetTime(wakeUpHour, wakeUpMinute);
             }
 
-            // Restore physics + movement
+            // Restore movement
             if (rb != null) rb.bodyType = RigidbodyType2D.Dynamic;
             if (movementScript != null) movementScript.enabled = true;
 

@@ -2,7 +2,6 @@ using UnityEngine;
 
 public class CurtainController : MonoBehaviour
 {
-    [Header("References")]
     [SerializeField] private GameTimeManager timeManager;
     [SerializeField] private SpriteRenderer targetRenderer; 
 
@@ -10,7 +9,7 @@ public class CurtainController : MonoBehaviour
     [SerializeField] private Sprite curtainsClosed;
     [SerializeField] private Sprite curtainsOpen;
 
-    [Header("Daylight Rules")]
+    [Header("Rules")]
     [SerializeField] private int dayStartHour = 6;  
     [SerializeField] private int nightStartHour = 19; 
 

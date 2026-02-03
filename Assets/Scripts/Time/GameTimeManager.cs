@@ -49,32 +49,26 @@ public class GameTimeManager : MonoBehaviour
 
     void UpdateTimeUI()
     {
-        // Keeping your original format (HHMM with no colon)
+        // format 
         timeText.text = $"{gameHours:D2}{gameMinutes:D2}";
     }
 
     public int GetHour() => gameHours;
     public int GetMinute() => gameMinutes;
 
-    // ✅ New: force time (used when waking up)
+    // wake time 
     public void SetTime(int hour, int minute)
     {
         gameHours = Mathf.Clamp(hour, 0, 23);
         gameMinutes = Mathf.Clamp(minute, 0, 59);
-        timer = 0f; // optional: reset minute timer so it doesn't instantly tick
+        timer = 0f;
         UpdateTimeUI();
     }
 
-    // ✅ New: check if it's night (22:00 -> 05:00)
+    // night check 
 public bool IsNightForSleeping()
 {
-    // Allowed window: 22:00 -> 05:00 (inclusive only at 05:00)
-    // Meaning:
-    // - 22:00 to 23:59 ✅
-    // - 00:00 to 04:59 ✅
-    // - 05:00 ✅
-    // - 05:01+ ❌
-
+    // 22:00 to 05:00 
     if (gameHours >= 22) return true;
     if (gameHours < 5) return true;
     if (gameHours == 5 && gameMinutes == 0) return true;

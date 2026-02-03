@@ -5,33 +5,29 @@ public class Sleep : MonoBehaviour
 {
     [Header("Input")]
     public KeyCode interactKey = KeyCode.E;
-
-    [Header("References")]
     public Animator animator;
-    public MonoBehaviour movementScript;   // Drag CharacterM here
+    public MonoBehaviour movementScript; 
     public Rigidbody2D rb;
 
     [Header("Time")]
-    public GameTimeManager timeManager;    // Drag your GameTimeManager here
+    public GameTimeManager timeManager; 
     public int wakeUpHour = 9;
     public int wakeUpMinute = 0;
 
     [Header("Snap")]
     public float snapSpeed = 20f;
 
-    [Header("Animator Triggers")]
+    [Header("Animator")]
     public string sitTrigger = "Sit";
     public string sleepTrigger = "Sleep";
     public string exitTrigger = "ExitAction";
-
-    [Header("Animator State Names")]
     public string idleState = "IdleAnimation";
     public string sitIdleState = "SitIdle";
     public string sleepIdleState = "SleepIdle";
 
-    [Header("Cutscene (Sleep -> Bedroom)")]
-    public CutsceneEndLoadScene cutsceneFlow;   // Drag CutscenePlayer here
-    public float cutsceneStartDelay = 0.05f;    // tiny delay to let pose settle
+    [Header("Cutscene")]
+    public CutsceneEndLoadScene cutsceneFlow; 
+    public float cutsceneStartDelay = 0.05f; 
 
     private InteractableSpot currentSpot;
 
@@ -52,22 +48,18 @@ public class Sleep : MonoBehaviour
     {
         if (!Input.GetKeyDown(interactKey)) return;
         if (isTransitioning) return;
-
-        // While sleeping we don't allow "exit" anymore (cutscene will take over)
         if (isSleepingAndCutsceneStarted) return;
 
         if (!isInAction)
             TryStartAction();
         else
-            StartExit(); // only meaningful for Sit now
+            StartExit(); 
     }
 
     private void TryStartAction()
     {
         if (currentSpot == null || currentSpot.actionPoint == null) return;
         if (animator == null) return;
-
-        // Cancel any pending routines (safety)
         if (waitPoseRoutine != null) { StopCoroutine(waitPoseRoutine); waitPoseRoutine = null; }
         if (exitRoutine != null) { StopCoroutine(exitRoutine); exitRoutine = null; }
 
@@ -77,8 +69,6 @@ public class Sleep : MonoBehaviour
 
         // Disable movement
         if (movementScript != null) movementScript.enabled = false;
-
-        // Freeze physics
         if (rb != null)
         {
             rb.velocity = Vector2.zero;
@@ -86,10 +76,9 @@ public class Sleep : MonoBehaviour
             rb.bodyType = RigidbodyType2D.Kinematic;
         }
 
-        // Snap to chair/bed point
+        // Snap 
         StartCoroutine(SnapTo(currentSpot.actionPoint.position));
 
-        // Fire enter trigger ONCE
         animator.ResetTrigger(exitTrigger);
         animator.ResetTrigger(sitTrigger);
         animator.ResetTrigger(sleepTrigger);
@@ -99,14 +88,14 @@ public class Sleep : MonoBehaviour
         else
             animator.SetTrigger(sleepTrigger);
 
-        // Wait until we arrive at the idle pose state (SitIdle/SleepIdle)
+        // Wait until idle 
         string targetIdlePose = (currentActionType == SpotType.Sit) ? sitIdleState : sleepIdleState;
 
         waitPoseRoutine = StartCoroutine(WaitUntilState(targetIdlePose, () =>
         {
             isTransitioning = false;
 
-            // If we just entered SleepIdle, start cutscene immediately
+            // start cutscene
             if (currentActionType == SpotType.Sleep)
             {
                 StartCoroutine(StartCutsceneAfterSleepPose());
@@ -119,15 +108,15 @@ public class Sleep : MonoBehaviour
         if (isSleepingAndCutsceneStarted) yield break;
         isSleepingAndCutsceneStarted = true;
 
-        // Optional tiny delay so animation fully settles / avoids a 1-frame pop
+        // delay 
         if (cutsceneStartDelay > 0f)
             yield return new WaitForSeconds(cutsceneStartDelay);
 
-        // Set wake-up time now (since we won't "exit" sleep anymore)
+        // wake-up time 
         if (timeManager != null)
             timeManager.SetTime(wakeUpHour, wakeUpMinute);
 
-        // Play cutscene (it will load Bedroom when finished)
+        // Play cutscene 
         if (cutsceneFlow != null)
         {
             cutsceneFlow.Play();
@@ -135,19 +124,18 @@ public class Sleep : MonoBehaviour
         else
         {
             Debug.LogError("Sleep: cutsceneFlow is not assigned.");
-            // Fallback: restore control so you don't get stuck
             RestoreControl();
             isSleepingAndCutsceneStarted = false;
         }
     }
 
-    // Sit exit still works normally
+    // Sit exit 
     private void StartExit()
     {
         if (!isInAction) return;
         if (animator == null) return;
 
-        // If current action is sleep, ignore exit (we don't want wake-up triggered by key)
+        // ignore exit while asleep
         if (currentActionType == SpotType.Sleep) return;
 
         if (waitPoseRoutine != null) { StopCoroutine(waitPoseRoutine); waitPoseRoutine = null; }
@@ -169,7 +157,7 @@ public class Sleep : MonoBehaviour
 
         isInAction = false;
         isTransitioning = false;
-        currentActionType = SpotType.Sit; // doesn't matter, just resets
+        currentActionType = SpotType.Sit; 
     }
 
     private IEnumerator WaitUntilState(string stateName, System.Action onReached)

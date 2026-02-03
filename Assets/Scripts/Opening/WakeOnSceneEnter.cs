@@ -3,9 +3,8 @@ using UnityEngine;
 
 public class WakeOnSceneEnter : MonoBehaviour
 {
-    [Header("References")]
     [SerializeField] private Animator animator;
-    [SerializeField] private MonoBehaviour movementScript; // your CharacterM (optional)
+    [SerializeField] private MonoBehaviour movementScript; 
     [SerializeField] private Rigidbody2D rb;
 
     [Header("Animator")]
@@ -13,7 +12,7 @@ public class WakeOnSceneEnter : MonoBehaviour
     [SerializeField] private string idleState = "IdleAnimation";
     [SerializeField] private string exitTrigger = "ExitAction";
 
-    [Header("Timing")]
+    [Header("Delay")]
     [SerializeField] private float startDelay = 0.05f;
 
     private void Awake()
@@ -33,7 +32,7 @@ public class WakeOnSceneEnter : MonoBehaviour
     {
         if (animator == null) yield break;
 
-        // optional: lock control during wake
+        // lock control (wake)
         if (movementScript != null) movementScript.enabled = false;
 
         if (rb != null)
@@ -42,19 +41,17 @@ public class WakeOnSceneEnter : MonoBehaviour
             rb.angularVelocity = 0f;
             rb.bodyType = RigidbodyType2D.Kinematic;
         }
-
-        // let the scene settle 1 frame
         if (startDelay > 0f) yield return new WaitForSeconds(startDelay);
 
-        // force the animator into SleepIdle first (so the wake makes sense)
+        // SleepIdle first
         animator.Play(sleepIdleState, 0, 0f);
         yield return null;
 
-        // trigger wake (your existing transition)
+        // trigger wake 
         animator.ResetTrigger(exitTrigger);
         animator.SetTrigger(exitTrigger);
 
-        // wait until we're back to IdleAnimation
+        // animation set
         while (!animator.GetCurrentAnimatorStateInfo(0).IsName(idleState))
             yield return null;
 

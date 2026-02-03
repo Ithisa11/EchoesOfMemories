@@ -2,9 +2,9 @@ using UnityEngine;
 
 public class DiaryAutoNoteTrigger : MonoBehaviour
 {
-    [SerializeField] private string title = "New discovery";
+    [SerializeField] private string title = "title";
     [TextArea(2, 8)]
-    [SerializeField] private string body = "Something happened...";
+    [SerializeField] private string body = "body";
     [SerializeField] private bool triggerOnce = true;
 
     private bool used;

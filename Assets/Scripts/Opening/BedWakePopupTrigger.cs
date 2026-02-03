@@ -24,7 +24,5 @@ public class BedWakePopupTrigger : MonoBehaviour
 
         if (popup != null)
             popup.Show();
-        else
-            Debug.LogWarning("BedWakePopupTrigger: popup reference is missing.");
     }
 }

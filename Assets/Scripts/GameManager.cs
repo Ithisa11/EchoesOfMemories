@@ -29,9 +29,5 @@ public class GameManager : MonoBehaviour
         {
             player.transform.position = spawn.transform.position;
         }
-        else
-        {
-            Debug.LogWarning($"GameManager: Missing Player or PlayerSpawn in scene '{scene.name}'.");
-        }
     }
 }

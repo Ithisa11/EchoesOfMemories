@@ -4,14 +4,14 @@ using UnityEngine.SceneManagement;
 
 public class PauseMenuController : MonoBehaviour
 {
-    [Header("UI References")]
+    [Header("UI")]
     [SerializeField] private GameObject pauseRoot;
     [SerializeField] private GameObject firstSelected;
 
     [Header("Keys")]
     [SerializeField] private KeyCode pauseKey = KeyCode.Escape;
 
-    [Header("Scene Names")]
+    [Header("Scenes")]
     [SerializeField] private string mainMenuSceneName = "MainMenu";
     [SerializeField] private string optionsSceneName = "Options";
 
@@ -81,7 +81,6 @@ public class PauseMenuController : MonoBehaviour
     {
         if (string.IsNullOrEmpty(sceneName))
         {
-            Debug.LogError("PauseMenuController: sceneName is empty.");
             return;
         }
 
